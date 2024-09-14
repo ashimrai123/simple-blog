@@ -48,7 +48,6 @@ const AddPost = () => {
 
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const { toast } = useToast();
 
@@ -57,7 +56,6 @@ const AddPost = () => {
 
   const onSubmit = async (data: FormData) => {
     // Set the form as submitted
-    setIsSubmitted(true);
 
     const file = fileInputRef.current?.files?.[0];
 
@@ -111,7 +109,6 @@ const AddPost = () => {
       // Reset the form fields and image preview
       reset();
       setImageSrc(null);
-      setIsSubmitted(false); // Reset submission state
     } catch (err) {
       console.error("Error adding post", err);
       // Optionally, show an error toast notification here

@@ -1,11 +1,9 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { deletePostById } from "@/lib/deletePost";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+
 import { FaChevronRight } from "react-icons/fa6";
 
 interface Post {
@@ -20,19 +18,6 @@ interface PostDetailProps {
 }
 
 export default function EditPost({ post }: PostDetailProps) {
-  const [open, setOpen] = useState(false);
-  const router = useRouter();
-
-  const handleDeletePost = async (id: number) => {
-    try {
-      await deletePostById(id);
-      setOpen(false);
-      router.push("/posts");
-    } catch (error) {
-      console.error("Failed to delete the post", error);
-    }
-  };
-
   return (
     <>
       {/* --------------------------- Breadcrumb ----------------------------- */}
