@@ -1,27 +1,21 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Poppins } from "next/font/google";
 
-import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import SidebarLayout from "@/components/SidebarLayout";
 import { SidebarProvider } from "@/components/SidebarProvider";
+import { ThemeProvider } from "@/components/theme-provider";
+import "./globals.css";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
-  weight: "100 900",
+  weight: "100 200 300 400 500 600 700 800 900",
 });
 
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
-  weight: "100 900",
-});
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["200", "300", "400", "500", "600", "700", "800"],
+  weight: "100 200 300 400 500 600 700 800 900",
 });
 
 export const metadata: Metadata = {
@@ -37,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.className}  flex flex-col min-h-screen font antialiased overflow-x-hidden`}
+        className={`${geistMono.className} ${geistSans.className}  flex flex-col min-h-screen font antialiased overflow-x-hidden`}
       >
         <ThemeProvider
           attribute="class"
