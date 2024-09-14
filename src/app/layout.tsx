@@ -5,6 +5,7 @@ import SidebarLayout from "@/components/SidebarLayout";
 import { SidebarProvider } from "@/components/SidebarProvider";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -41,6 +42,7 @@ export default function RootLayout({
         >
           <SidebarProvider>
             <SidebarLayout>{children}</SidebarLayout>
+            <Toaster />
           </SidebarProvider>
         </ThemeProvider>
       </body>

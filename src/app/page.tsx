@@ -28,7 +28,7 @@ export default async function Home() {
             <div className="grid grid-cols-3 gap-10">
               {/* --------------------- Display Last 3 Posts ----------------------- */}
               <div className="col-span-3 lg:col-span-2 lg:border-r-2 lg:pr-10 ">
-                <Link href={`/posts/${posts.length - 1}`} className={""}>
+                <Link href={`/posts/${posts.length}`} className={""}>
                   {posts.length > 0 && posts[posts.length - 1].imageUrl ? (
                     <div className="relative group">
                       <Image

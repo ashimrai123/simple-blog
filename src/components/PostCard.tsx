@@ -23,6 +23,9 @@ import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBinLine } from "react-icons/ri";
 import Link from "next/link";
 import { Card } from "./ui/card";
+import { deletePostById } from "@/lib/deletePost";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 interface Post {
   id: number;
@@ -36,23 +39,42 @@ interface ClientPostCardProps {
 }
 
 const ClientPostCard: React.FC<ClientPostCardProps> = ({ post }) => {
-  const handleDeletePost = (id: number) => {
-    console.log(id);
+  const router = useRouter();
+
+  const { toast } = useToast();
+
+  const handleDeletePost = async (id: number) => {
+    try {
+      await deletePostById(id);
+      toast({
+        title: "Post Deleted",
+        description: "Your post has been deleted successfully.",
+      });
+
+      router.push("/posts");
+    } catch (error) {
+      console.error("Failed to delete the post", error);
+    }
   };
+
   return (
     <Card key={post.id}>
-      <div className="flex  gap-5">
+      <div className="grid xl:grid-cols-2  gap-5">
         <TooltipProvider>
-          <Image
-            src={post.imageUrl as string}
-            alt={`Post ${post.id}`}
-            height={500}
-            width={500}
-            style={{ objectFit: "cover" }}
-            className="w-96 h-50"
-          />
+          <Link href={`/posts/${post.id}`} className="relative group ">
+            <Image
+              src={post.imageUrl as string}
+              alt={`Post ${post.id}`}
+              height={500}
+              width={500}
+              style={{ objectFit: "cover" }}
+              className="w-full h-52 sm:h-72"
+            />
+            <div className=" absolute z-10 inset-0 bg-black opacity-0 rounded-md group-hover:opacity-35 transition-opacity duration-300"></div>
+          </Link>
+
           <div className="flex flex-col gap-5">
-            <div className="flex justify-between  gap-4">
+            <div className="flex  flex-col-reverse sm:flex-row justify-between gap-2 sm:gap-4">
               <div className="order-2 flex  gap-2 ml-auto">
                 {/* Edit button with tooltip */}
                 <Tooltip>
@@ -115,14 +137,14 @@ const ClientPostCard: React.FC<ClientPostCardProps> = ({ post }) => {
                 </Dialog>
               </div>
               <Link
-                href={`/post/${post.id}`}
-                className="text-2xl font-bold hover:underline underline-offset-4 "
+                href={`/posts/${post.id}`}
+                className="text-lg tracking-tighter sm:text-2xl font-bold hover:underline underline-offset-4 "
               >
                 {post.title}
               </Link>
             </div>
 
-            <p className="line-clamp-3 ">{post.body}</p>
+            <p className="line-clamp-3 text-sm sm:text-base ">{post.body}</p>
           </div>
         </TooltipProvider>
       </div>

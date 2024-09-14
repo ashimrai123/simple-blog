@@ -1,10 +1,9 @@
 import axios from "axios";
 
-const URL = process.env.NEXT_PUBLIC_API_URL || "https://api.example.com";
-
+// Set up Axios instance
 export const axiosInstance = axios.create({
-  baseURL: URL,
-  headers: {
+  baseURL: "https://jsonplaceholder.typicode.com",
+  params: {
     "Content-Type": "application/json",
   },
 });

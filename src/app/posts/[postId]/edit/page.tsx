@@ -1,19 +1,36 @@
 "use client";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Footer from "@/components/Footer";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Card } from "@/components/ui/card";
-import { useRef, useState } from "react";
-import Image from "next/image";
-import { IoMdAddCircleOutline } from "react-icons/io";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { axiosInstance } from "@/lib/axiosInstance";
 import { useToast } from "@/hooks/use-toast";
+import { fetchPostById } from "@/lib/api";
+import Image from "next/image";
+import { IoMdAddCircleOutline } from "react-icons/io";
+import { FaChevronRight } from "react-icons/fa6";
+import Link from "next/link";
+
+interface PageProps {
+  params: {
+    postId: string;
+  };
+}
+
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+  imageUrl?: string | null;
+}
 
 const schema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
@@ -31,12 +48,17 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const AddPost = () => {
+// ---------------- Edit Post Component ------------------//
+
+const EditPost = ({ params }: PageProps) => {
+  const router = useRouter();
+  const { postId } = params;
   const {
     handleSubmit,
     register,
     formState: { errors },
-    reset, // Destructure reset method
+    reset,
+    setValue,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -48,20 +70,47 @@ const AddPost = () => {
 
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [post, setPost] = useState<Post>();
 
   const { toast } = useToast();
 
-  // For referencing type = file input
+  useEffect(() => {
+    if (postId) {
+      const fetchPost = async () => {
+        setIsLoading(true);
+        try {
+          const post = await fetchPostById(postId as string);
+          if (post) {
+            setValue("title", post.title);
+            setValue("body", post.body);
+            setValue("imageUrl", post.imageUrl || "");
+            setImageSrc(post.imageUrl || null);
+            setIsLoading(false);
+          }
+          setPost(post);
+        } catch (error) {
+          console.error("Failed to fetch post", error);
+          setIsLoading(false);
+          toast({
+            title: "Error",
+            description: "Failed to fetch post details.",
+          });
+        }
+      };
+
+      fetchPost();
+    }
+  }, [postId, setValue, toast]);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onSubmit = async (data: FormData) => {
-    // Set the form as submitted
     setIsSubmitted(true);
 
     const file = fileInputRef.current?.files?.[0];
 
-    // Ensure at least one image is uploaded or URL provided
     if (!file && !data.imageUrl) {
       setImageError(
         "You must upload at least one image or provide an image URL."
@@ -80,44 +129,38 @@ const AddPost = () => {
       }
     }
 
-    setImageError(null); // Clear any previous errors
+    setImageError(null);
 
-    // Convert image file to FormData if file is provided
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("body", data.body);
     if (data.imageUrl) formData.append("imageUrl", data.imageUrl);
     if (file) formData.append("image", file);
 
+    // Our fake API doesn't allow multipart/form-data
     try {
-      // Sending the post data to jsonplaceholder without image because it doesn't allow that method
-      const res = await axiosInstance.post(
-        "https://jsonplaceholder.typicode.com/posts",
-        {
-          title: data.title,
-          body: data.body,
-          imageUrl: data.imageUrl || null,
-        }
-      );
-
-      // Show toast notification
-      toast({
-        title: "Post Added",
-        description: "Your post has been added successfully.",
+      await axiosInstance.put(`/posts/${postId}`, {
+        title: data.title,
+        body: data.body,
+        imageUrl: data.imageUrl || null,
       });
 
-      console.log("Post added successfully:", res.data);
+      console.log("Update successful", formData);
 
-      // Reset the form fields and image preview
+      toast({
+        title: "Post Updated",
+        description: "Your post has been updated successfully.",
+      });
+
       reset();
       setImageSrc(null);
-      setIsSubmitted(false); // Reset submission state
+      setIsSubmitted(false);
+      router.push(`/posts/${postId}`);
     } catch (err) {
-      console.error("Error adding post", err);
-      // Optionally, show an error toast notification here
+      console.error("Error updating post", err);
       toast({
         title: "Error",
-        description: "There was an error adding the post.",
+        description: "There was an error updating the post.",
       });
     }
   };
@@ -133,12 +176,11 @@ const AddPost = () => {
         setImageError("File size must be less than 5MB");
         return;
       }
-      setImageError(null); // Clear any previous errors
+      setImageError(null);
       setImageSrc(URL.createObjectURL(file));
     }
   };
 
-  // Click on the referenced element
   const handleButtonClick = () => {
     fileInputRef.current?.click();
   };
@@ -146,20 +188,45 @@ const AddPost = () => {
   return (
     <>
       <MaxWidthWrapper className="my-10">
+        {/* --------------------------- Breadcrumb ----------------------------- */}
+        <div className="pb-10">
+          <div className="flex gap-4 items-center font-medium">
+            <Link
+              href="/posts"
+              className="hover:text-primary hover:underline underline-offset-4"
+            >
+              Posts
+            </Link>{" "}
+            <FaChevronRight className="shrink-0" />{" "}
+            <Link
+              href={`/posts/${post?.id}`}
+              className=" hover:text-primary truncate max-w-72 hover:underline underline-offset-4 "
+              title={post?.title}
+            >
+              {post?.title}
+            </Link>{" "}
+            <FaChevronRight className="shrink-0" />{" "}
+            <p className="text-gray-500">Edit</p>
+          </div>
+        </div>
         <Card>
-          <h1 className="text-xl sm:text-2xl">Add Blog Post</h1>
+          <h1 className="text-xl sm:text-2xl">Edit Blog Post</h1>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Card className="flex flex-col gap-5 mt-5">
               <div>
                 <Label className="text-base sm:text-lg font-semibold">
                   Title
                 </Label>
-                <Input
-                  {...register("title")}
-                  type="text"
-                  placeholder="Enter the post title"
-                  className="mt-2"
-                />
+                {isLoading ? (
+                  <div className="h-8 rounded-md mt-2 bg-muted-foreground/40 w-full animate-pulse duration-1000"></div>
+                ) : (
+                  <Input
+                    {...register("title")}
+                    type="text"
+                    placeholder="Enter the post title"
+                    className="mt-2"
+                  />
+                )}
                 {errors.title && (
                   <p className="mt-2 text-primary">{errors.title.message}</p>
                 )}
@@ -168,12 +235,16 @@ const AddPost = () => {
                 <Label className="text-base sm:text-lg font-semibold">
                   Body
                 </Label>
-                <Textarea
-                  {...register("body")}
-                  placeholder="Enter the post content"
-                  className="resize-none mt-2"
-                  rows={10}
-                />
+                {isLoading ? (
+                  <div className="h-60 rounded-md mt-2 bg-muted-foreground/40 w-full animate-pulse duration-1000"></div>
+                ) : (
+                  <Textarea
+                    {...register("body")}
+                    placeholder="Enter the post content"
+                    className="resize-none mt-2"
+                    rows={10}
+                  />
+                )}
                 {errors.body && (
                   <p className="mt-2 text-primary">{errors.body.message}</p>
                 )}
@@ -182,16 +253,18 @@ const AddPost = () => {
                 <Label className="text-base sm:text-lg font-semibold">
                   Image URL
                 </Label>
-                <Input
-                  {...register("imageUrl")}
-                  type="text"
-                  placeholder="Optional: Enter image URL"
-                  className="mt-2"
-                />
+                {isLoading ? (
+                  <div className="h-8 rounded-md mt-2 bg-muted-foreground/40 w-full animate-pulse duration-1000"></div>
+                ) : (
+                  <Input
+                    {...register("imageUrl")}
+                    type="text"
+                    placeholder="Optional: Enter image URL"
+                    className="mt-2"
+                  />
+                )}
                 {errors.imageUrl && (
-                  <p className=" mt-2 text-primary">
-                    {errors.imageUrl.message}
-                  </p>
+                  <p className="mt-2 text-primary">{errors.imageUrl.message}</p>
                 )}
               </div>
               <div className="flex flex-col">
@@ -214,6 +287,8 @@ const AddPost = () => {
                     style={{ objectFit: "cover" }}
                     className="my-3 h-40 w-40 rounded-md"
                   />
+                ) : isLoading ? (
+                  <div className="my-3 h-40 w-40 rounded-md  bg-muted-foreground/40  animate-pulse duration-1000"></div>
                 ) : (
                   <div className="my-3 h-40 w-40 bg-muted-foreground/30 rounded-md flex justify-center items-center text-center">
                     No Image Available
@@ -235,7 +310,7 @@ const AddPost = () => {
               </div>
 
               <Button type="submit" className="w-40 h-10">
-                Add Post
+                Update Post
               </Button>
             </Card>
           </form>
@@ -246,4 +321,4 @@ const AddPost = () => {
   );
 };
 
-export default AddPost;
+export default EditPost;

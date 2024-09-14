@@ -1,4 +1,8 @@
+// pages/posts/[postId].tsx
 import { fetchPostById } from "@/lib/api";
+import PostDetail from "@/components/PostDetail";
+import Footer from "@/components/Footer";
+import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 
 interface PageProps {
   params: {
@@ -6,19 +10,27 @@ interface PageProps {
   };
 }
 
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+  imageUrl?: string | null;
+}
+
 export default async function PostPage({ params }: PageProps) {
   const { postId } = params;
-
-  const post = await fetchPostById(postId);
+  const post: Post = await fetchPostById(postId);
 
   if (!post) {
-    return <div>Post not found</div>; // Handle the case where the post does not exist
+    return <div>Post not found</div>;
   }
 
   return (
-    <div>
-      <h1>{post.title}</h1>
-      <p>{post.body}</p>
-    </div>
+    <>
+      <MaxWidthWrapper className="my-10">
+        <PostDetail post={post} />
+      </MaxWidthWrapper>
+      <Footer />
+    </>
   );
 }

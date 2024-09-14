@@ -1,25 +1,17 @@
 "use client";
-import Image from "next/image";
+import { useSidebar } from "@/components/SidebarProvider";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
-import React, { useContext, useEffect, useState } from "react";
-import { FiEdit } from "react-icons/fi";
+import { usePathname } from "next/navigation";
+import { AiFillHome } from "react-icons/ai";
 import {
   FaChevronRight,
   FaFileLines,
   FaFileMedical,
-  FaImages,
   FaRegPenToSquare,
 } from "react-icons/fa6";
-import { TfiDashboard } from "react-icons/tfi";
-import { FiUser } from "react-icons/fi";
-import { LuUsers } from "react-icons/lu";
-import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { RiLogoutBoxLine, RiMenuFold3Line } from "react-icons/ri";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { useSidebar } from "@/components/SidebarProvider";
-import { IoDocumentText } from "react-icons/io5";
-import { AiFillHome } from "react-icons/ai";
+import { RiMenuFold3Line } from "react-icons/ri";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -54,10 +46,10 @@ const Sidebar = () => {
             "flex    rounded-md items-center justify-between py-6 "
           )}
         >
-          <div className={cn("flex items-center gap-3 py-3 px-3 ")}>
+          <Link href={"/"} className={cn("flex items-center gap-3 py-3 px-3 ")}>
             <FaRegPenToSquare className="size-5" />
-            <h1 className="text-2xl font-bold  cursor-default  ">Blog</h1>
-          </div>
+            <h1 className="text-2xl font-bold  ">Blog</h1>
+          </Link>
           <Button
             onClick={toggleSidebar}
             className="bg-transparent rounded-none hover:bg-transparent"
@@ -65,7 +57,10 @@ const Sidebar = () => {
             <RiMenuFold3Line className="text-2xl " />
           </Button>
         </div>
-        <div className="w-full h-32 bg-muted-foreground/40 rounded-md mt-4 flex items-center justify-center font-bold"></div>
+        <div className="w-full h-32 bg-muted-foreground/30 rounded-md mt-4 flex flex-col items-center justify-center font-bold">
+          <p className="text-lg mb-2">Welcome!</p>
+        </div>
+
         <ul className="px-4 py-4">
           <li className=" border-b  ">
             <Link

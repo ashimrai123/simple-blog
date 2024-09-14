@@ -1,10 +1,11 @@
-// app/posts/page.tsx (Server Component)
+// pages/posts.tsx
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Card } from "@/components/ui/card";
 import React from "react";
 import { fetchCombinedData } from "@/lib/api";
 import Footer from "@/components/Footer";
 import PostCard from "@/components/PostCard";
+import PostPagination from "@/components/PostPagination";
 
 interface Post {
   id: number;
@@ -13,19 +14,18 @@ interface Post {
   imageUrl?: string | null;
 }
 
+const POSTS_PER_PAGE = 10;
+
 const Posts = async () => {
   const posts: Post[] = await fetchCombinedData();
+  const reversedPosts = [...posts].reverse();
 
   return (
     <>
       <MaxWidthWrapper className="my-10">
         <Card>
           <h1 className="text-xl sm:text-2xl">All Posts</h1>
-          <div className="grid gap-5 mt-5">
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
+          <PostPagination posts={reversedPosts} postsPerPage={POSTS_PER_PAGE} />
         </Card>
       </MaxWidthWrapper>
       <Footer />
