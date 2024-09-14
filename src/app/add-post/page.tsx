@@ -36,7 +36,7 @@ const AddPost = () => {
     handleSubmit,
     register,
     formState: { errors },
-    reset, // Destructure reset method
+    reset,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -88,7 +88,7 @@ const AddPost = () => {
     if (file) formData.append("image", file);
 
     try {
-      // Sending the post data to jsonplaceholder without image because it doesn't allow that method
+      // Sending the post data to jsonplaceholder without image because it doesn't allow multipart/form-data Content-Type
       const res = await axiosInstance.post(
         "https://jsonplaceholder.typicode.com/posts",
         {
@@ -111,7 +111,7 @@ const AddPost = () => {
       setImageSrc(null);
     } catch (err) {
       console.error("Error adding post", err);
-      // Optionally, show an error toast notification here
+      // Error toast
       toast({
         title: "Error",
         description: "There was an error adding the post.",
