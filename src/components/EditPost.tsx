@@ -1,31 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { deletePostById } from "@/lib/deletePost";
 import Image from "next/image";
 import Link from "next/link";
-import { FaRegEdit } from "react-icons/fa";
-import { FaChevronRight } from "react-icons/fa6";
-import { RiDeleteBinLine } from "react-icons/ri";
-import { cn } from "@/lib/utils";
-import { deletePostById } from "@/lib/deletePost";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { FaChevronRight } from "react-icons/fa6";
 
 interface Post {
   id: number;

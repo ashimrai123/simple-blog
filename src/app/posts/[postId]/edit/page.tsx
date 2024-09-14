@@ -70,7 +70,6 @@ const EditPost = ({ params }: PageProps) => {
 
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [post, setPost] = useState<Post>();
 
@@ -107,8 +106,6 @@ const EditPost = ({ params }: PageProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onSubmit = async (data: FormData) => {
-    setIsSubmitted(true);
-
     const file = fileInputRef.current?.files?.[0];
 
     if (!file && !data.imageUrl) {
@@ -154,7 +151,6 @@ const EditPost = ({ params }: PageProps) => {
 
       reset();
       setImageSrc(null);
-      setIsSubmitted(false);
       router.push(`/posts/${postId}`);
     } catch (err) {
       console.error("Error updating post", err);

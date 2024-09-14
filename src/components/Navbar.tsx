@@ -1,18 +1,14 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import MaxWidthWrapper from "./MaxWidthWrapper";
-import { Button, buttonVariants } from "./ui/button";
-import { GiHamburgerMenu } from "react-icons/gi";
+import { cn } from "@/lib/utils";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Input } from "./ui/input";
-import { GoSearch } from "react-icons/go";
-import { IoAdd } from "react-icons/io5";
-import { IoIosAddCircleOutline } from "react-icons/io";
-import { useSidebar } from "./SidebarProvider";
-import { RiMenuUnfold3Line } from "react-icons/ri";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { IoIosAddCircleOutline } from "react-icons/io";
+import { RiMenuUnfold3Line } from "react-icons/ri";
+import MaxWidthWrapper from "./MaxWidthWrapper";
+import { useSidebar } from "./SidebarProvider";
+import { Button, buttonVariants } from "./ui/button";
 
 const Navbar = () => {
   const { isSidebarOpen, toggleSidebar } = useSidebar();

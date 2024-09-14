@@ -1,11 +1,9 @@
 // pages/posts.tsx
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { Card } from "@/components/ui/card";
-import React from "react";
-import { fetchCombinedData } from "@/lib/api";
 import Footer from "@/components/Footer";
-import PostCard from "@/components/PostCard";
+import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import PostPagination from "@/components/PostPagination";
+import { Card } from "@/components/ui/card";
+import { fetchCombinedData } from "@/lib/api";
 
 interface Post {
   id: number;

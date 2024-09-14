@@ -1,16 +1,14 @@
-import React from "react";
-import { Card } from "./ui/card";
-import MaxWidthWrapper from "./MaxWidthWrapper";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "./ui/button";
+import Link from "next/link";
 import {
   FaFacebookF,
   FaGithub,
   FaInstagram,
   FaLinkedinIn,
-  FaYoutube,
 } from "react-icons/fa6";
+import MaxWidthWrapper from "./MaxWidthWrapper";
+import { buttonVariants } from "./ui/button";
+import { Card } from "./ui/card";
 
 const Footer = () => {
   return (

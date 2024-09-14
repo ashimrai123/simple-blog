@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import PostCard from "@/components/PostCard";
 import {
   Pagination,
   PaginationContent,
@@ -8,9 +8,8 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-  PaginationEllipsis,
 } from "@/components/ui/pagination";
-import PostCard from "@/components/PostCard";
+import { useState } from "react";
 
 interface Post {
   id: number;
