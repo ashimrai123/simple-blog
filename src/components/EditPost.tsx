@@ -3,7 +3,6 @@
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import Link from "next/link";
-
 import { FaChevronRight } from "react-icons/fa6";
 
 interface Post {
@@ -20,7 +19,7 @@ interface PostDetailProps {
 export default function EditPost({ post }: PostDetailProps) {
   return (
     <>
-      {/* --------------------------- Breadcrumb ----------------------------- */}
+      {/* Breadcrumb navigation */}
       <div className="pb-10">
         <div className="flex gap-4 items-center font-medium">
           <Link
@@ -33,15 +32,16 @@ export default function EditPost({ post }: PostDetailProps) {
           <Link
             href={`/posts/${post.id}`}
             title={post.title}
-            className=" hover:text-primary hover:underline underline-offset-4 truncate max-w-72"
+            className="hover:text-primary hover:underline underline-offset-4 truncate max-w-72"
           >
-            {post?.title}
+            {post.title}
           </Link>{" "}
           <FaChevronRight className="shrink-0" />{" "}
           <p className="text-gray-500">Edit</p>
         </div>
       </div>
 
+      {/* Post details */}
       <Card>
         <div className="flex flex-col-reverse sm:flex-row justify-between gap-2 sm:gap-4">
           <h1 className="text-lg tracking-tighter sm:text-2xl font-bold hover:underline underline-offset-4">
@@ -59,6 +59,7 @@ export default function EditPost({ post }: PostDetailProps) {
           />
         </div>
       </Card>
+
       <Card className="mt-10">
         <p>{post.body}</p>
       </Card>

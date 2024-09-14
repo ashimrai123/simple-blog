@@ -42,9 +42,9 @@ interface PostDetailProps {
 export default function PostDetail({ post }: PostDetailProps) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-
   const { toast } = useToast();
 
+  // Handle post deletion with error handling
   const handleDeletePost = async (id: number) => {
     try {
       await deletePostById(id);
@@ -72,7 +72,7 @@ export default function PostDetail({ post }: PostDetailProps) {
           </Link>{" "}
           <FaChevronRight className="shrink-0" />{" "}
           <p className="text-gray-500 truncate max-w-72" title={post.title}>
-            {post?.title}
+            {post.title}
           </p>
         </div>
       </div>

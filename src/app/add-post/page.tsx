@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { axiosInstance } from "@/lib/axiosInstance";
 import { useToast } from "@/hooks/use-toast";
 
+// Zod schema for form validation with helpful error messages
 const schema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
   body: z
@@ -32,6 +33,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const AddPost = () => {
+  // Initializing the form with react-hook-form and zod for validation
   const {
     handleSubmit,
     register,
@@ -46,20 +48,19 @@ const AddPost = () => {
     },
   });
 
-  const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [imageError, setImageError] = useState<string | null>(null);
+  const [imageSrc, setImageSrc] = useState<string | null>(null); // Image preview URL
+  const [imageError, setImageError] = useState<string | null>(null); // Error for image validation
 
-  const { toast } = useToast();
+  const { toast } = useToast(); // Toast for notifications
 
-  // For referencing type = file input
+  // File input ref (because we're using an uncontrolled component here)
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Submit handler, handles form data and validation
   const onSubmit = async (data: FormData) => {
-    // Set the form as submitted
-
     const file = fileInputRef.current?.files?.[0];
 
-    // Ensure at least one image is uploaded or URL provided
+    // Ensure at least one image is uploaded or a URL is provided
     if (!file && !data.imageUrl) {
       setImageError(
         "You must upload at least one image or provide an image URL."
@@ -67,6 +68,7 @@ const AddPost = () => {
       return;
     }
 
+    // Image validation (format and size)
     if (file) {
       if (!file.type.startsWith("image/")) {
         setImageError("File must be an image");
@@ -80,7 +82,7 @@ const AddPost = () => {
 
     setImageError(null); // Clear any previous errors
 
-    // Convert image file to FormData if file is provided
+    // Build FormData if file is provided
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("body", data.body);
@@ -88,7 +90,7 @@ const AddPost = () => {
     if (file) formData.append("image", file);
 
     try {
-      // Sending the post data to jsonplaceholder without image because it doesn't allow multipart/form-data Content-Type
+      // Send post data (note: image won't be sent here due to jsonplaceholder limits)
       const res = await axiosInstance.post(
         "https://jsonplaceholder.typicode.com/posts",
         {
@@ -98,7 +100,7 @@ const AddPost = () => {
         }
       );
 
-      // Show toast notification
+      // Success! Show toast and reset the form
       toast({
         title: "Post Added",
         description: "Your post has been added successfully.",
@@ -106,12 +108,11 @@ const AddPost = () => {
 
       console.log("Post added successfully:", res.data);
 
-      // Reset the form fields and image preview
-      reset();
-      setImageSrc(null);
+      reset(); // Reset the form after successful submission
+      setImageSrc(null); // Clear the image preview
     } catch (err) {
       console.error("Error adding post", err);
-      // Error toast
+      // Error toast in case something went wrong
       toast({
         title: "Error",
         description: "There was an error adding the post.",
@@ -119,6 +120,7 @@ const AddPost = () => {
     }
   };
 
+  // Handle image file change for preview and validation
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -131,11 +133,11 @@ const AddPost = () => {
         return;
       }
       setImageError(null); // Clear any previous errors
-      setImageSrc(URL.createObjectURL(file));
+      setImageSrc(URL.createObjectURL(file)); // Set image preview
     }
   };
 
-  // Click on the referenced element
+  // Trigger file input click when the user clicks "Upload Image"
   const handleButtonClick = () => {
     fileInputRef.current?.click();
   };

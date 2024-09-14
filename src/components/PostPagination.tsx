@@ -26,11 +26,14 @@ interface ClientPaginationProps {
 const ClientPagination = ({ posts, postsPerPage }: ClientPaginationProps) => {
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Total pages based on the number of posts and posts per page
   const totalPages = Math.ceil(posts.length / postsPerPage);
 
+  // Calculate the slice of posts to display for the current page
   const startIndex = (currentPage - 1) * postsPerPage;
   const currentPosts = posts.slice(startIndex, startIndex + postsPerPage);
 
+  // Handle page switching, ensuring it's within valid bounds
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
@@ -39,22 +42,27 @@ const ClientPagination = ({ posts, postsPerPage }: ClientPaginationProps) => {
 
   return (
     <>
+      {/* Render current page's posts */}
       <div className="grid gap-5 mt-5">
         {currentPosts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
       </div>
 
+      {/* Pagination controls */}
       <Pagination className="mt-6">
         <PaginationContent>
+          {/* Previous button */}
           <PaginationItem>
             <PaginationPrevious
-              className={` cursor-pointer ${
-                currentPage === 1 ? " opacity-50" : ""
+              className={`cursor-pointer ${
+                currentPage === 1 ? "opacity-50" : ""
               }`}
               onClick={() => handlePageChange(currentPage - 1)}
             />
           </PaginationItem>
+
+          {/* Page numbers */}
           {Array.from({ length: totalPages }, (_, index) => (
             <PaginationItem key={index + 1} className="cursor-pointer">
               <PaginationLink
@@ -66,10 +74,11 @@ const ClientPagination = ({ posts, postsPerPage }: ClientPaginationProps) => {
             </PaginationItem>
           ))}
 
+          {/* Next button */}
           <PaginationItem>
             <PaginationNext
               className={`cursor-pointer ${
-                currentPage === totalPages ? " opacity-50" : ""
+                currentPage === totalPages ? "opacity-50" : ""
               }`}
               onClick={() => handlePageChange(currentPage + 1)}
             />

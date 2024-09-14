@@ -1,4 +1,5 @@
 "use client";
+
 import { cn } from "@/lib/utils";
 import { ReactNode, useEffect } from "react";
 import Sidebar from "./Sidebar";
@@ -13,6 +14,7 @@ const SidebarLayouts = ({ children }: LayoutProps) => {
   const { isSidebarOpen, toggleSidebar } = useSidebar();
 
   useEffect(() => {
+    // Toggle body overflow for mobile view based on sidebar state
     if (isSidebarOpen && window.innerWidth < 768) {
       document.body.classList.add("overflow-hidden");
     } else {
@@ -21,42 +23,40 @@ const SidebarLayouts = ({ children }: LayoutProps) => {
   }, [isSidebarOpen]);
 
   return (
-    <>
-      <div className={`flex  w-full overflow-hidden `}>
-        {/* Sidebar */}
-        <aside>
-          <Sidebar />
-        </aside>
+    <div className="flex w-full overflow-hidden">
+      {/* Sidebar */}
+      <aside>
+        <Sidebar />
+      </aside>
+
+      {/* Main content area */}
+      <div
+        className={`flex flex-col flex-grow w-full transition-all duration-300 ${
+          isSidebarOpen ? "pl-80" : "pl-0"
+        }`}
+      >
+        {/* Mobile overlay to close the sidebar */}
         <div
-          className={`flex flex-col flex-grow w-full ease-in-out duration-300 ${
-            isSidebarOpen ? "pl-80" : "pl-0"
-          }`}
+          className={cn(
+            "fixed hidden z-20 top-0 left-0 bg-black transition-all duration-300 w-full h-full",
+            { "bg-opacity-70 block md:hidden": isSidebarOpen }
+          )}
+          onClick={toggleSidebar}
+        />
+
+        {/* Navbar */}
+        <Navbar />
+
+        {/* Main content */}
+        <main
+          className={cn("flex-grow", {
+            "min-w-max sm:min-w-full": isSidebarOpen,
+          })}
         >
-          {/* Overlay */}
-          <div
-            className={cn(
-              `fixed hidden z-20 top-0 left-0 bg-black transition-all duration-300 w-full h-full border  `,
-              {
-                "bg-opacity-70 block md:hidden ": isSidebarOpen,
-              }
-            )}
-            onClick={() => toggleSidebar()}
-          ></div>
-          {/* Navbar */}
-
-          <Navbar />
-
-          {/* Main Content */}
-          <div
-            className={cn(`flex-grow flex-1  `, {
-              "min-w-max sm:min-w-full": isSidebarOpen,
-            })}
-          >
-            {children}
-          </div>
-        </div>
+          {children}
+        </main>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -19,6 +19,7 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import { FaChevronRight } from "react-icons/fa6";
 import Link from "next/link";
 
+// Page props and post interfaces
 interface PageProps {
   params: {
     postId: string;
@@ -32,6 +33,7 @@ interface Post {
   imageUrl?: string | null;
 }
 
+// Zod schema for form validation
 const schema = z.object({
   title: z.string().min(1, { message: "Title is required" }),
   body: z
@@ -53,6 +55,8 @@ type FormData = z.infer<typeof schema>;
 const EditPost = ({ params }: PageProps) => {
   const router = useRouter();
   const { postId } = params;
+
+  // React Hook Form setup
   const {
     handleSubmit,
     register,
@@ -68,6 +72,7 @@ const EditPost = ({ params }: PageProps) => {
     },
   });
 
+  // Local state for handling image and loading status
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -75,6 +80,7 @@ const EditPost = ({ params }: PageProps) => {
 
   const { toast } = useToast();
 
+  // Fetch post details for editing when the component mounts
   useEffect(() => {
     if (postId) {
       const fetchPost = async () => {
@@ -82,6 +88,7 @@ const EditPost = ({ params }: PageProps) => {
         try {
           const post = await fetchPostById(postId as string);
           if (post) {
+            // Pre-populate form fields with fetched data
             setValue("title", post.title);
             setValue("body", post.body);
             setValue("imageUrl", post.imageUrl || "");
@@ -103,11 +110,14 @@ const EditPost = ({ params }: PageProps) => {
     }
   }, [postId, setValue, toast]);
 
+  // Ref for file input to handle image uploads
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Handle form submission for updating the post
   const onSubmit = async (data: FormData) => {
     const file = fileInputRef.current?.files?.[0];
 
+    // Validate either image file or URL is provided
     if (!file && !data.imageUrl) {
       setImageError(
         "You must upload at least one image or provide an image URL."
@@ -115,6 +125,7 @@ const EditPost = ({ params }: PageProps) => {
       return;
     }
 
+    // Validate file type and size if a file is uploaded
     if (file) {
       if (!file.type.startsWith("image/")) {
         setImageError("File must be an image");
@@ -128,13 +139,14 @@ const EditPost = ({ params }: PageProps) => {
 
     setImageError(null);
 
+    // Prepare form data (for image file upload if needed)
     const formData = new FormData();
     formData.append("title", data.title);
     formData.append("body", data.body);
     if (data.imageUrl) formData.append("imageUrl", data.imageUrl);
     if (file) formData.append("image", file);
 
-    // Our fake API doesn't allow multipart/form-data
+    // API call to update the post
     try {
       await axiosInstance.put(`/posts/${postId}`, {
         title: data.title,
@@ -149,6 +161,7 @@ const EditPost = ({ params }: PageProps) => {
         description: "Your post has been updated successfully.",
       });
 
+      // Reset form and redirect to the updated post page
       reset();
       setImageSrc(null);
       router.push(`/posts/${postId}`);
@@ -161,6 +174,7 @@ const EditPost = ({ params }: PageProps) => {
     }
   };
 
+  // Handle image file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -177,6 +191,7 @@ const EditPost = ({ params }: PageProps) => {
     }
   };
 
+  // Programmatically trigger the file input when the button is clicked
   const handleButtonClick = () => {
     fileInputRef.current?.click();
   };
@@ -205,6 +220,8 @@ const EditPost = ({ params }: PageProps) => {
             <p className="text-gray-500">Edit</p>
           </div>
         </div>
+
+        {/* --------------------------- Edit Post Form ----------------------------- */}
         <Card>
           <h1 className="text-xl sm:text-2xl">Edit Blog Post</h1>
           <form onSubmit={handleSubmit(onSubmit)}>

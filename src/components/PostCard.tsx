@@ -40,7 +40,6 @@ interface ClientPostCardProps {
 
 const ClientPostCard: React.FC<ClientPostCardProps> = ({ post }) => {
   const router = useRouter();
-
   const { toast } = useToast();
 
   const handleDeletePost = async (id: number) => {
@@ -50,7 +49,6 @@ const ClientPostCard: React.FC<ClientPostCardProps> = ({ post }) => {
         title: "Post Deleted",
         description: "Your post has been deleted successfully.",
       });
-
       router.push("/posts");
     } catch (error) {
       console.error("Failed to delete the post", error);
@@ -59,9 +57,10 @@ const ClientPostCard: React.FC<ClientPostCardProps> = ({ post }) => {
 
   return (
     <Card key={post.id}>
-      <div className="grid xl:grid-cols-2  gap-5">
+      <div className="grid xl:grid-cols-2 gap-5">
+        {/* Image with hover effect */}
         <TooltipProvider>
-          <Link href={`/posts/${post.id}`} className="relative group ">
+          <Link href={`/posts/${post.id}`} className="relative group">
             <Image
               src={post.imageUrl as string}
               alt={`Post ${post.id}`}
@@ -70,12 +69,12 @@ const ClientPostCard: React.FC<ClientPostCardProps> = ({ post }) => {
               style={{ objectFit: "cover" }}
               className="w-full h-52 sm:h-72"
             />
-            <div className=" absolute z-10 inset-0 bg-black opacity-0 rounded-md group-hover:opacity-35 transition-opacity duration-300"></div>
+            <div className="absolute z-10 inset-0 bg-black opacity-0 rounded-md group-hover:opacity-35 transition-opacity duration-300"></div>
           </Link>
 
           <div className="flex flex-col gap-5">
-            <div className="flex  flex-col-reverse sm:flex-row justify-between gap-2 sm:gap-4">
-              <div className="order-2 flex  gap-2 ml-auto">
+            <div className="flex flex-col-reverse sm:flex-row justify-between gap-2 sm:gap-4">
+              <div className="order-2 flex gap-2 ml-auto">
                 {/* Edit button with tooltip */}
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -86,12 +85,10 @@ const ClientPostCard: React.FC<ClientPostCardProps> = ({ post }) => {
                       <FaRegEdit className="text-xl sm:text-2xl" />
                     </Link>
                   </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Edit</p>
-                  </TooltipContent>
+                  <TooltipContent>Edit</TooltipContent>
                 </Tooltip>
 
-                {/* Delete button with dialog and tooltip */}
+                {/* Delete button with dialog */}
                 <Dialog>
                   <DialogTrigger asChild>
                     <div
@@ -110,7 +107,6 @@ const ClientPostCard: React.FC<ClientPostCardProps> = ({ post }) => {
                         Are you sure you want to delete this post?
                       </DialogDescription>
                     </DialogHeader>
-
                     <div className="flex justify-end gap-2 pt-3">
                       <DialogClose>
                         <div
@@ -138,13 +134,12 @@ const ClientPostCard: React.FC<ClientPostCardProps> = ({ post }) => {
               </div>
               <Link
                 href={`/posts/${post.id}`}
-                className="text-lg tracking-tighter sm:text-2xl font-bold hover:underline underline-offset-4 "
+                className="text-lg tracking-tighter sm:text-2xl font-bold hover:underline underline-offset-4"
               >
                 {post.title}
               </Link>
             </div>
-
-            <p className="line-clamp-3 text-sm sm:text-base ">{post.body}</p>
+            <p className="line-clamp-3 text-sm sm:text-base">{post.body}</p>
           </div>
         </TooltipProvider>
       </div>
