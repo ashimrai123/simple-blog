@@ -1,15 +1,17 @@
-// Fetch all blog posts without images
+// Fetch the first 25 blog posts
 export async function fetchBlogPosts() {
   const res = await fetch("https://jsonplaceholder.typicode.com/posts");
   if (!res.ok) {
     throw new Error("Failed to fetch posts");
   }
-  return res.json();
+  const allPosts = await res.json();
+  // Limit to the first 25 posts
+  return allPosts.slice(0, 20);
 }
 
-// Fetch images to combine with posts
+// Fetch the first 25 images
 export async function fetchImages() {
-  const res = await fetch("https://picsum.photos/v2/list");
+  const res = await fetch("https://picsum.photos/v2/list?page=1&limit=20");
   if (!res.ok) {
     throw new Error("Failed to fetch images");
   }
@@ -33,7 +35,7 @@ export async function fetchCombinedData() {
     id: post.id,
     title: post.title,
     body: post.body,
-    imageUrl: imageMap.get(String(post.id)) || null, // Convert post.id to string for matching
+    imageUrl: imageMap.get(String(post.id - 1)) || null, // Convert post.id to string for matching
   }));
 }
 

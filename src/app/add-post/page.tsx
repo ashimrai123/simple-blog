@@ -1,7 +1,17 @@
+import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+import { Card } from "@/components/ui/card";
 import React from "react";
 
-const page = () => {
-  return <div>page</div>;
+const AddPost = () => {
+  return (
+    <>
+      <MaxWidthWrapper className="my-10">
+        <Card>
+          <h1>Add Post</h1>
+        </Card>
+      </MaxWidthWrapper>
+    </>
+  );
 };
 
-export default page;
+export default AddPost;
