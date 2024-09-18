@@ -13,9 +13,7 @@ interface Post {
 
 const POSTS_PER_PAGE = 10;
 
-const Posts = async () => {
-  // Fetch all posts and reverse their order to show the latest first
-  const posts: Post[] = await fetchCombinedData();
+const Posts = ({ posts }: { posts: Post[] }) => {
   const reversedPosts = [...posts].reverse();
 
   return (
@@ -31,5 +29,16 @@ const Posts = async () => {
     </>
   );
 };
+
+export async function getStaticProps() {
+  // Fetch all posts and reverse their order to show the latest first
+  const posts: Post[] = await fetchCombinedData();
+
+  return {
+    props: {
+      posts,
+    },
+  };
+}
 
 export default Posts;
