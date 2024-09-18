@@ -4,9 +4,7 @@ import Footer from "@/components/Footer";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 
 interface PageProps {
-  params: {
-    postId: string; // Dynamic postId from the URL
-  };
+  post: Post | null; // Post object or null if not found
 }
 
 interface Post {
@@ -16,12 +14,7 @@ interface Post {
   imageUrl?: string | null;
 }
 
-export default async function PostPage({ params }: PageProps) {
-  const { postId } = params;
-
-  // Fetch the post by ID
-  const post: Post = await fetchPostById(postId);
-
+export default function PostPage({ post }: PageProps) {
   // Handle case when no post is found
   if (!post) {
     return <div>Post not found</div>;
@@ -36,4 +29,22 @@ export default async function PostPage({ params }: PageProps) {
       <Footer />
     </>
   );
+}
+
+// This function gets called on every request
+export async function getServerSideProps(context: {
+  params: { postId: string };
+}) {
+  const { postId } = context.params;
+
+  try {
+    // Fetch the post by ID
+    const post = await fetchPostById(postId);
+
+    // Pass the post data to the page via props
+    return { props: { post } };
+  } catch (error) {
+    // Handle errors (e.g., post not found)
+    return { props: { post: null } };
+  }
 }
